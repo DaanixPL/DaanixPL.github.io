@@ -1,0 +1,423 @@
+/* ---------- Reset & base ---------- */
+:root{
+  --accent: #8a6bff;
+  --accent-2: #b997ff;
+  --text: #ffffff;
+  --glass: rgba(255,255,255,0.06);
+  --font-family: 'Rubik', sans-serif;
+  --primary-gradient-color: linear-gradient(90deg, #e64157, #415de6);
+  --muted-text: #9a9a9a;
+  --tertiary-color: #12c2e9;
+  --vertical-gradient: linear-gradient(to top, #12c2e9, #c471ed, #f64f59);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body,#root{height:100%}
+body{
+  min-height:100vh;
+  font-family: 'Rubik', sans-serif;
+  color:var(--text);
+  background: #000;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  overflow-x:hidden;
+}
+
+/* ---------- Background layer ---------- */
+/* Umieść swój obraz w assets/grid.png */
+.bg{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  background-image: url("assets/grid.png"), url("assets/backgroundDark.svg");
+  background-size:cover;
+  background-position:center center;
+  transform-origin:center;
+  will-change: transform, opacity;
+  pointer-events:none;
+  /* lekki zoom/puls dla głębi — GPU-accelerated (transform) */
+  animation: bgZoom 18s ease-in-out infinite alternate;
+}
+
+/* subtelna, wolna zmiana kąta/położenia (opcjonalne) */
+@keyframes sweep{
+  0%   { transform: translateX(-120%) translateY(-10%); }
+  50%  { transform: translateX(0%)    translateY(5%);  }
+  100% { transform: translateX(120%)  translateY(-10%); }
+}
+
+@keyframes bgZoom{
+  0%   { transform: scale(1) translateY(0px); }
+  100% { transform: scale(1.035) translateY(-12px); }
+}
+
+/* dodatkowa: bardzo delikatne 'pulsowanie' linii przez overlay
+   (możesz wyłączyć jeśli przesadzone) */
+.bg::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(0deg, rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 80px 80px, 80px 80px;
+  mix-blend-mode: overlay;
+  opacity:0.25;
+  animation: gridPulse 6s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes gridPulse{
+  0% { opacity:0.20; transform: translateZ(0) }
+  50% { opacity:0.30; transform: translateZ(0) }
+  100% { opacity:0.20; transform: translateZ(0) }
+}
+
+/* ---------- Content (na wierzchu) ---------- */
+.page{position:relative;min-height:100vh;z-index:2}
+
+.main {
+  /* Zwiększony padding-top o 100vh, aby sekcja zaczynała się poza ekranem */
+  padding-top: 100vh;
+  padding-right: 1rem;
+  padding-bottom: 6rem;
+  padding-left: 1rem;
+  z-index: 2;
+  position: relative;
+}
+/* Dostosuj padding dla urządzeń mobilnych */
+@media (max-width: 720px) {
+  .hero { padding: 2.5rem 1rem; height: 70vh; }
+  h1 { font-size: clamp(22px, 6vw, 42px); }
+  .bg::before { background-size: 60px 60px, 60px 60px; }
+}
+
+/* hero */
+.hero{
+  height:80vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:4rem 1rem;
+  z-index:2;
+}
+.hero-inner{
+  max-width:920px;
+  backdrop-filter: blur(0); /* pseudo glass off — unikamy blur na ruchomym tle */
+}
+h1{font-size:clamp(28px,5vw,64px);line-height:1.02;margin-bottom:.5rem}
+.tag {
+  opacity: 0.9;
+  margin-bottom: 1.2rem;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: clamp(13px, 1.5vw, 22px); /* responsywny rozmiar */
+  line-height: 1.3; /* lepsza czytelność */
+}
+
+/* CTA */
+.ctas{display:inline-flex;gap:.8rem;flex-wrap:wrap;justify-content:center}
+.btn{
+  display:inline-block;
+  padding:.7rem 1.1rem;
+  border-radius:10px;
+  text-decoration:none;
+  color:#fff;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  border:1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 6px 18px rgba(102,80,255,0.12);
+  transition:transform .22s ease, box-shadow .22s ease;
+  font-weight:600;
+}
+.btn:hover{ transform: translateY(-3px) scale(1.01); box-shadow: 0 14px 30px rgba(102,80,255,0.16) }
+.btn.ghost{ background:transparent; border:1px solid rgba(255,255,255,0.12); color: #fff; box-shadow:none }
+
+/* main / info */
+.main{padding:3rem 1rem 6rem; z-index:2; position:relative}
+.info{max-width:900px;margin:0 auto;background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); padding:1.6rem;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.45)}
+
+/* Theme toggle */
+#theme-toggle{
+  position:fixed;right:18px;bottom:18px;z-index:30;
+  width:44px;height:44px;border-radius:50%;border:none;background:rgba(255,255,255,0.06);color:#fff;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:18px;backdrop-filter:none;
+}
+
+/* Dark mode (inverse) */
+.dark {
+  --accent: #00d4ff;
+  --accent-2: #54f0ff;
+  --text: #000000; /* Zmień kolor tekstu na ciemny */
+}
+
+.dark .bg {
+  background-image: url("assets/grid.png"), url("assets/backgroundLight.svg");
+  filter: none; /* Usuń filtry dla jasnego tła, aby było bardziej kontrastowe */
+}
+#about {
+  padding-top: 20vh;
+}
+/* Responsywność */
+@media (max-width:720px){
+  .hero{padding:2.5rem 1rem;height:70vh}
+  h1{font-size:clamp(22px,6vw,42px)}
+  .bg::before{background-size:60px 60px,60px 60px}
+}
+/* ---------- Navbar ---------- */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 2rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.25);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+/* ---------- Navbar ---------- */
+/* ... reszta kodu z navbaru ... */
+
+.navbar .logo {
+  /* Podstawowe style logo */
+  font-family: 'Pacifico', cursive;
+  font-size: 2rem;
+  font-weight: 400;
+  text-shadow: 0 0 10px rgba(138, 107, 255, 0.5);
+  transition: all 0.3s ease;
+  
+  /* Nowe style dla efektu błysku */
+  background: linear-gradient(
+    90deg,
+    var(--accent) 0%,
+    var(--text) 50%,
+    var(--accent) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 200% auto;
+  animation: shine 4s linear infinite; /* Zastosowanie animacji */
+}
+
+
+.navbar .logo:hover {
+  text-shadow: 0 0 20px rgba(138, 107, 255, 0.8);
+  transform: scale(1.02);
+}
+
+/* Animacja błysku */
+@keyframes shine {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.navbar .logo:hover {
+  text-shadow: 0 0 20px rgba(138, 107, 255, 0.8);
+  transform: scale(1.02);
+}
+
+.navbar nav {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 1rem;
+}
+
+.navbar a {
+  color: var(--text);
+  text-decoration: none;
+  position: relative;
+  transition: color 0.3s ease;
+  padding: 0.5rem 0;
+}
+
+.navbar a::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%) scaleX(0);
+  width: 100%;
+  height: 2px;
+  background-color: var(--accent);
+  transition: transform 0.3s ease;
+}
+
+.navbar a:hover::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+/* Responsywność dla navbar */
+@media (max-width: 720px) {
+  .navbar {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 0.5rem;
+  }
+
+  .navbar nav {
+    gap: 1rem;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+  }
+
+  .navbar .logo {
+    font-size: 1.8rem;
+  }
+}
+/* ---------- Sekcje Projects i Contact (ulepszone) ---------- */
+#projects {
+  text-align: center;
+  padding: 3rem 1rem 6rem; /* Dodatkowe paddingi dla lepszego wyglądu */
+}
+
+#projects h2 {
+  font-size: clamp(2rem, 5vw, 3rem); /* Zwiększony rozmiar czcionki */
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.project-card {
+  display: block;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.03));
+  padding: 1.5rem;
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.project-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.project-card h3 {
+  font-size: 1.25rem;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+.project-card p {
+  opacity: 0.8;
+}
+
+/* ---------- Sekcja Kontakt - ulepszony CSS ---------- */
+#contact {
+  text-align: center;
+  padding: 3rem 1rem 6rem; /* Dodatkowe paddingi dla lepszego wyglądu */
+}
+
+#contact h2 {
+  font-size: clamp(2rem, 5vw, 3rem); /* Zwiększony rozmiar czcionki */
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+#contact p {
+  font-size: 1.2rem;
+  opacity: 0.8;
+  margin-bottom: 2rem; /* Większy odstęp od ikon */
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.socials {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  text-decoration: none;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.social-icon:hover {
+  transform: translateY(-5px) scale(1.1);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Kolory ikon po najechaniu - dopasuj do swoich preferencji */
+.social-icon .fa-github:hover {
+  color: #fff;
+  background: #24292e;
+}
+
+.social-icon .fa-discord:hover {
+  color: #fff;
+  background: #7289da;
+}
+
+.social-icon .fa-handshake:hover {
+  color: #fff;
+  background: var(--accent);
+}
+::-webkit-scrollbar {
+ width: 5px;
+
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background: var(--vertical-gradient);
+  box-shadow: inset 2px 2px 2px rgba(255, 255, 255, 0.25), inset -2px -2px -2px rgba(0,0,0,0.25);
+  -webkit-box-shadow: inset 2px 2px 2px rgba(255, 255, 255, 0.25), inset -2px -2px -2px rgba(0,0,0,0.25);
+}
+.small-text {
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  color: var(--text); /* Używa koloru tekstu z Twoich zmiennych */
+  opacity: 0.8;
+  margin-right: -0.5rem;
+}
+
+/* Styl dla dużego tekstu "vDanix" */
+/* Styl dla dużego tekstu "vDanix" - z animacją błysku */
+.name-text {
+  font-size: clamp(4.5rem, 6vw, 6rem); /* Poprawiony rozmiar */
+  line-height: 1; /* Dodano line-height */
+
+  /* Style dla gradientu i błysku */
+  background: linear-gradient(90deg, var(--accent) 0%, var(--text) 50%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent; /* Zapewnia przezroczystość tekstu */
+  background-size: 200% auto;
+  animation: shine 4s linear infinite; /* Zastosowanie animacji */
+}
+
+/* Ogólne style dla h1, aby utrzymać tekst w jednej linii */
+.hero-inner h1 {
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
